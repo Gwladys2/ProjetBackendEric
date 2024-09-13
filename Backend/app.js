@@ -5,7 +5,7 @@ const app = express();
 const Thing = require('./models/thing');
 
 // Connexion à MongoDB
-mongoose.connect('mongodb+srv://NomUtilisateur:MotDepasseIci@cluster0.c7ljozc.mongodb.net/test?retryWrites=true&w=majority', {
+mongoose.connect('mongodb+srv://NomUtilisateur:password@cluster0.c7ljozc.mongodb.net/test?retryWrites=true&w=majority', {
     useNewUrlParser: true,
     useUnifiedTopology: true
 })
@@ -21,22 +21,40 @@ app.use((req, res, next) => {
     next();
 });
 
-// Route GET pour récupérer les livres
-app.get('/api/books', (req, res) => {
-    const stuff = [
-        {
-            "id": "1",
-            "userId": "clc4wj5lh3gyi0ak4eq4n8syr",
-            "title": "Milwaukee Mission",
-            "author": "Elder Cooper",
-            "year": 2021,
-            "genre": "Policier",
-            "averageRating": 5,
-            "imageUrl": "https://via.placeholder.com/206x260"
-        }
-    ];
-    res.status(200).json(stuff);
+// Route GET pour récupérer les livres de la base de données
+
+app.get('/api/books', (req, res, next)=>{
+    Thing.find()
+        .then(things=>res.status(200).json(things))
+        .catch(error=>res.status(400).json({error}));
 });
+
+app.get('/api/books/:id', (req,res)=>{
+    const bookId=req.params.id;
+
+    Thing.findById(bookId)
+        .then(thing=>{
+            if (thing){
+                res.status(200).json(thing);
+            }else {
+                res.status(404).json({message:'Livre non trouvé'});
+            }
+        })
+        .catch(error=>res.status(400).json({error}));
+});
+
+app.put('/api/books/:id', (req,res, next)=>{
+    Thing.updateOne({_id:req.params.id},{...req.body, _id:req.params.id})
+        .then(()=>res.status(200).json({message:'Objet modifié avec succes!'}))
+        .catch(error=>res.status(400).json({error}));
+});
+
+app.delete('/api/books/:id', (req, res, next)=>{
+    Thing.deleteOne({_id:req.params.id})
+        .then(()=>res.status(200).json({message: 'Objet supprimé avec succes!!'}))
+        .catch(error=>res.status(400).json({error}));
+})
+
 
 // Route POST pour ajouter un livre
 app.post('/api/books', async (req, res) => {
