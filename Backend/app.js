@@ -5,7 +5,7 @@ const app = express();
 const booksRoutes=require('../Backend/routes/books')
 
 // Connexion à MongoDB
-mongoose.connect('mongodb+srv://@cluster0.c7ljozc.mongodb.net/test?retryWrites=true&w=majority', {
+mongoose.connect('mongodb+srv://GwladysA:brida2000@cluster0.c7ljozc.mongodb.net/test?retryWrites=true&w=majority', {
     useNewUrlParser: true,
     useUnifiedTopology: true
 })
