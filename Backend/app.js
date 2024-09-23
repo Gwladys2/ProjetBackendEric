@@ -2,10 +2,11 @@ const express = require('express');
 const mongoose = require('mongoose');
 const userRoutes=require('../Backend/routes/user')
 const app = express();
-const booksRoutes=require('../Backend/routes/books')
+const booksRoutes=require('../Backend/routes/books');
+const path=require('path');
 
 // Connexion à MongoDB
-mongoose.connect('mongodb+srv://GwladysA:brida2000@cluster0.c7ljozc.mongodb.net/test?retryWrites=true&w=majority', {
+mongoose.connect('mongodb+srv://IdentifiantIci:VotreMotDePass@cluster0.c7ljozc.mongodb.net/test?retryWrites=true&w=majority', {
     useNewUrlParser: true,
     useUnifiedTopology: true
 })
@@ -21,8 +22,9 @@ app.use((req, res, next) => {
     next();
 });
 
-// Route GET pour récupérer les livres de la base de données
 app.use('/api/books', booksRoutes);
 app.use('/api/auth',userRoutes);
+app.use('/images', express.static(path.join(__dirname, 'images')));
 
-module.exports = app;
+
+module.exports = app
